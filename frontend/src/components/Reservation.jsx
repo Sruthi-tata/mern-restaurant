@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { HiOutlineArrowNarrowRight } from "react-icons/hi";
 import axios from "axios";
-import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -11,12 +10,33 @@ const Reservation = () => {
   const [email, setEmail] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [phone, setPhone] = useState(0);
+  const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleReservation = async (e) => {
     e.preventDefault();
+
+    // Validation
+    if (!firstName || !lastName || !email || !phone || !date || !time) {
+      toast.error("Please fill out all fields.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (phone.toString().length < 10) {
+      toast.error("Please enter a valid 10-digit phone number.");
+      return;
+    }
+
     try {
+      setLoading(true);
+
       const { data } = await axios.post(
         "http://localhost:4000/reservation/send",
         { firstName, lastName, email, phone, date, time },
@@ -27,16 +47,21 @@ const Reservation = () => {
           withCredentials: true,
         }
       );
+
       toast.success(data.message);
+      // Reset form fields
       setFirstName("");
       setLastName("");
-      setPhone(0);
       setEmail("");
-      setTime("");
+      setPhone("");
       setDate("");
+      setTime("");
+
       navigate("/success");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message || "Reservation failed.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,13 +69,13 @@ const Reservation = () => {
     <section className="reservation" id="reservation">
       <div className="container">
         <div className="banner">
-          <img src="/reservation.png" alt="res" />
+          <img src="/reservation.png" alt="Reservation Dish" />
         </div>
         <div className="banner">
           <div className="reservation_form_box">
             <h1>MAKE A RESERVATION</h1>
             <p>For Further Questions, Please Call</p>
-            <form>
+            <form onSubmit={handleReservation}>
               <div>
                 <input
                   type="text"
@@ -94,8 +119,8 @@ const Reservation = () => {
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </div>
-              <button type="submit" onClick={handleReservation}>
-                RESERVE NOW{" "}
+              <button type="submit" disabled={loading}>
+                {loading ? "Reserving..." : "RESERVE NOW"}{" "}
                 <span>
                   <HiOutlineArrowNarrowRight />
                 </span>

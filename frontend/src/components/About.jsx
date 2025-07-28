@@ -13,13 +13,11 @@ const About = () => {
               <p>The only thing we're serious about is food.</p>
             </div>
             <p className="mid">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-              Provident possimus optio adipisci dolores impedit illum iusto
-              perferendis, laudantium quod accusamus consequuntur consectetur,
-              tempore nulla error iure reiciendis dolorem assumenda.
-              Necessitatibus fugit asperiores totam rem esse exercitationem
-              iusto ipsum qui dolore ex, accusantium repellat mollitia
-              repellendus.
+              We believe that taste transcends feelings—turning 
+              every meal into a celebration of good vibes.
+              Our passion for bold flavors and warm hospitality transforms 
+              every gathering into an uplifting experience, 
+              leaving you with unforgettable memories and joy.
             </p>
             <Link to={"/"}>
               Explore Menu{" "}
